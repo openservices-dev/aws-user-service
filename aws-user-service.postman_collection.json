@@ -1,0 +1,1073 @@
+{
+	"info": {
+		"_postman_id": "ee72a526-aec8-4fdb-b399-ba2243bdba54",
+		"name": "aws-user-service",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "30452292"
+	},
+	"item": [
+		{
+			"name": "Sign up",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const responseJson = pm.response.json();",
+							"",
+							"pm.test(\"Response must be valid and have a body\", function () {",
+							"    pm.response.to.be.ok;",
+							"    pm.response.to.be.withBody;",
+							"    pm.response.to.be.json;",
+							"});",
+							"",
+							"pm.test(\"Response must contain basic user data\", function () {",
+							"    pm.expect(responseJson.data.user.id).to.not.be.undefined;",
+							"    pm.expect(responseJson.data.user.username).to.equal(request.data.username);",
+							"});",
+							"",
+							"pm.collectionVariables.set('id', responseJson.data.user.id);",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "username",
+							"value": "{{username}}",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "{{password}}",
+							"type": "text"
+						},
+						{
+							"key": "meta[email]",
+							"value": "{{username}}",
+							"type": "text"
+						},
+						{
+							"key": "meta[name]",
+							"value": "Test",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:3010/users/register",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3010",
+					"path": [
+						"users",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Sign in with not active user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const responseJson = pm.response.json();",
+							"",
+							"pm.test(\"Response must not be ok and have a body\", function () {",
+							"    pm.response.to.be.not.ok;",
+							"    pm.response.to.be.withBody;",
+							"    pm.response.to.be.json;",
+							"});",
+							"",
+							"pm.test(\"Response must contain error message\", function () {",
+							"    pm.expect(responseJson.data).to.oneOf([null, undefined]);",
+							"    pm.expect(responseJson.error).to.not.be.oneOf([null, undefined]);",
+							"    pm.expect(responseJson.error.message).to.be.equal('User is not verified!');",
+							"});",
+							"",
+							"pm.test(\"Response must not contain refreshToken in cookies\", function () {",
+							"    pm.expect(pm.cookies.has('refreshToken')).to.be.false;",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "username",
+							"value": "{{username}}",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "{{password}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:3010/users/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3010",
+					"path": [
+						"users",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Confirm sign up",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const responseJson = pm.response.json();",
+							"",
+							"pm.test(\"Response must be valid and have a body\", function () {",
+							"    pm.response.to.be.ok;",
+							"    pm.response.to.be.withBody;",
+							"    pm.response.to.be.json;",
+							"});",
+							"",
+							"pm.test(\"Response must contain basic user data\", function () {",
+							"    pm.expect(responseJson.data.user).to.be.null;",
+							"    pm.expect(responseJson.error).to.be.null;",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "code",
+							"value": "265851",
+							"type": "text"
+						},
+						{
+							"key": "username",
+							"value": "{{username}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:3010/users/confirm",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3010",
+					"path": [
+						"users",
+						"confirm"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Sign in with incorrect credentials",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Response is not ok and have a body\", function () {",
+							"    pm.response.to.be.not.ok;",
+							"    pm.response.to.be.withBody;",
+							"    pm.response.to.be.json;",
+							"});",
+							"",
+							"pm.test(\"Response must have error and inform about wrong password\", function () {",
+							"    const responseJson = pm.response.json();",
+							"    pm.expect(responseJson.data).to.oneOf([null, undefined]);",
+							"    pm.expect(responseJson.error.message).to.be.string;",
+							"});",
+							"",
+							"pm.test(\"Response cannot contain refreshToken in cookies\", function () {",
+							"    pm.expect(pm.cookies.has('refreshToken')).to.be.false;",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableCookies": true
+			},
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "username",
+							"value": "{{username}}",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "wrrongpassword",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:3010/users/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3010",
+					"path": [
+						"users",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Sign in",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const responseJson = pm.response.json();",
+							"",
+							"pm.test(\"Response must be valid and have a body\", function () {",
+							"    pm.response.to.be.ok;",
+							"    pm.response.to.be.withBody;",
+							"    pm.response.to.be.json;",
+							"});",
+							"",
+							"pm.test(\"Response must contain basic user data\", function () {",
+							"    pm.expect(responseJson.data.user.id).to.not.be.undefined;",
+							"    pm.expect(responseJson.data.accessToken).to.be.string;",
+							"    pm.expect(responseJson.error).to.oneOf([null, undefined]);",
+							"});",
+							"",
+							"pm.test(\"Response must contain refreshToken in cookies\", function () {",
+							"    pm.expect(pm.cookies.get('refreshToken')).to.be.string;",
+							"});",
+							"",
+							"pm.collectionVariables.set('accessToken', responseJson.data.user.accessToken);",
+							"pm.collectionVariables.set('refreshToken', pm.cookies.get('refreshToken'));",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "username",
+							"value": "{{username}}",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "{{password}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:3010/users/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3010",
+					"path": [
+						"users",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get current user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const responseJson = pm.response.json();",
+							"",
+							"pm.test(\"Response must be valid and have a body\", function () {",
+							"    pm.response.to.be.ok;",
+							"    pm.response.to.be.withBody;",
+							"    pm.response.to.be.json;",
+							"});",
+							"",
+							"pm.test(\"Response must contain basic user data\", function () {",
+							"    pm.expect(responseJson.data.user.id).to.not.be.undefined;",
+							"    pm.expect(responseJson.data.user.username).to.be.string;",
+							"    pm.expect(responseJson.error).to.oneOf([null, undefined]);",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": []
+				},
+				"url": {
+					"raw": "http://localhost:3010/users/me",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3010",
+					"path": [
+						"users",
+						"me"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Renew refreshToken",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const responseJson = pm.response.json();",
+							"",
+							"pm.test(\"Response must be valid and have a body\", function () {",
+							"    pm.response.to.be.ok;",
+							"    pm.response.to.be.withBody;",
+							"    pm.response.to.be.json;",
+							"});",
+							"",
+							"pm.test(\"Response must contain basic user data\", function () {",
+							"    pm.expect(responseJson.data.user.accessToken).to.be.string;",
+							"    pm.expect(responseJson.error).to.oneOf([null, undefined]);",
+							"});",
+							"",
+							"pm.test(\"Response must contain refreshToken in cookies\", function () {",
+							"    pm.expect(pm.cookies.get('refreshToken')).to.be.string;",
+							"});",
+							"",
+							"pm.collectionVariables.set('accessToken', responseJson.data.user.accessToken);",
+							"pm.collectionVariables.set('refreshToken', pm.cookies.get('refreshToken'));",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "refreshToken={{refreshToken}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": []
+				},
+				"url": {
+					"raw": "http://localhost:3010/users/refresh-token",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3010",
+					"path": [
+						"users",
+						"refresh-token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Sign out",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const responseJson = pm.response.json();",
+							"",
+							"pm.test(\"Response must be valid and have a body\", function () {",
+							"    pm.response.to.be.ok;",
+							"    pm.response.to.be.withBody;",
+							"    pm.response.to.be.json;",
+							"});",
+							"",
+							"pm.test(\"Response must contain basic user data\", function () {",
+							"    pm.expect(responseJson.data).to.be.null;",
+							"    pm.expect(responseJson.error).to.oneOf([null, undefined]);",
+							"});",
+							"",
+							"pm.test(\"Response must not contain refreshToken in cookies\", function () {",
+							"    pm.expect(pm.cookies.has('refreshToken')).to.be.false;",
+							"});",
+							"",
+							"if (pm.response.code === 200 && !pm.cookies.has('refreshToken')) {",
+							"    pm.collectionVariables.set('id', null);",
+							"    pm.collectionVariables.set('accessToken', null);",
+							"    pm.collectionVariables.set('refreshToken', null);",
+							"}",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Cookie",
+						"value": "refreshToken={{refreshToken}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": []
+				},
+				"url": {
+					"raw": "http://localhost:3010/users/logout",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3010",
+					"path": [
+						"users",
+						"logout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Sign in again",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const responseJson = pm.response.json();",
+							"",
+							"pm.test(\"Response must be valid and have a body\", function () {",
+							"    pm.response.to.be.ok;",
+							"    pm.response.to.be.withBody;",
+							"    pm.response.to.be.json;",
+							"});",
+							"",
+							"pm.test(\"Response must contain basic user data\", function () {",
+							"    pm.expect(responseJson.data.user.id).to.not.be.undefined;",
+							"    pm.expect(responseJson.data.accessToken).to.be.string;",
+							"    pm.expect(responseJson.error).to.oneOf([null, undefined]);",
+							"});",
+							"",
+							"pm.test(\"Response must contain refreshToken in cookies\", function () {",
+							"    pm.expect(pm.cookies.get('refreshToken')).to.be.string;",
+							"});",
+							"",
+							"pm.collectionVariables.set('accessToken', responseJson.data.user.accessToken);",
+							"pm.collectionVariables.set('refreshToken', pm.cookies.get('refreshToken'));",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "username",
+							"value": "{{username}}",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "{{password}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:3010/users/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3010",
+					"path": [
+						"users",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Request reset password",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "username",
+							"value": "{{username}}",
+							"type": "default"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:3010/users/password-reset-request",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3010",
+					"path": [
+						"users",
+						"password-reset-request"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Reset password",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "username",
+							"value": "{{username}}",
+							"type": "default"
+						},
+						{
+							"key": "password",
+							"value": "NewStrongerPassword2?1",
+							"type": "default"
+						},
+						{
+							"key": "code",
+							"value": "813663",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:3010/users/password-reset",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3010",
+					"path": [
+						"users",
+						"password-reset"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Sign in again with new password",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const responseJson = pm.response.json();",
+							"",
+							"pm.test(\"Response must be valid and have a body\", function () {",
+							"    pm.response.to.be.ok;",
+							"    pm.response.to.be.withBody;",
+							"    pm.response.to.be.json;",
+							"});",
+							"",
+							"pm.test(\"Response must contain basic user data\", function () {",
+							"    pm.expect(responseJson.data.user.id).to.not.be.undefined;",
+							"    pm.expect(responseJson.data.accessToken).to.be.string;",
+							"    pm.expect(responseJson.error).to.oneOf([null, undefined]);",
+							"});",
+							"",
+							"pm.test(\"Response must contain refreshToken in cookies\", function () {",
+							"    pm.expect(pm.cookies.get('refreshToken')).to.be.string;",
+							"});",
+							"",
+							"pm.collectionVariables.set('accessToken', responseJson.data.user.accessToken);",
+							"pm.collectionVariables.set('refreshToken', pm.cookies.get('refreshToken'));",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "username",
+							"value": "{{username}}",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "NewStrongerPassword2?1",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:3010/users/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3010",
+					"path": [
+						"users",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Setup MFA",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const responseJson = pm.response.json();",
+							"",
+							"pm.test(\"Response must be valid and have a body\", function () {",
+							"    pm.response.to.be.ok;",
+							"    pm.response.to.be.withBody;",
+							"    pm.response.to.be.json;",
+							"});",
+							"",
+							"pm.test(\"Response must contain basic user data\", function () {",
+							"    pm.expect(responseJson.data.user.id).to.not.be.undefined;",
+							"    pm.expect(responseJson.data.user.accessToken).to.be.string;",
+							"    pm.expect(responseJson.error).to.oneOf([null, undefined]);",
+							"});",
+							"",
+							"pm.test(\"Response must contain refreshToken in cookies\", function () {",
+							"    pm.expect(pm.cookies.get('refreshToken')).to.be.string;",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{aws_accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "username",
+							"value": "{{username}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:3010/users/totp/setup",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3010",
+					"path": [
+						"users",
+						"totp",
+						"setup"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Verify MFA",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const responseJson = pm.response.json();",
+							"",
+							"pm.test(\"Response must be valid and have a body\", function () {",
+							"    pm.response.to.be.ok;",
+							"    pm.response.to.be.withBody;",
+							"    pm.response.to.be.json;",
+							"});",
+							"",
+							"pm.test(\"Response must contain basic user data\", function () {",
+							"    pm.expect(responseJson.data.user.id).to.not.be.undefined;",
+							"    pm.expect(responseJson.data.user.accessToken).to.be.string;",
+							"    pm.expect(responseJson.error).to.oneOf([null, undefined]);",
+							"});",
+							"",
+							"pm.test(\"Response must contain refreshToken in cookies\", function () {",
+							"    pm.expect(pm.cookies.get('refreshToken')).to.be.string;",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{aws_accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "username",
+							"value": "{{username}}",
+							"type": "text"
+						},
+						{
+							"key": "code",
+							"value": "387260",
+							"type": "text"
+						},
+						{
+							"key": "session",
+							"value": "",
+							"type": "text",
+							"disabled": true
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:3010/users/totp/verify",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3010",
+					"path": [
+						"users",
+						"totp",
+						"verify"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Sign in with required MFA",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const responseJson = pm.response.json();",
+							"",
+							"pm.test(\"Response must be valid and have a body\", function () {",
+							"    pm.response.to.be.ok;",
+							"    pm.response.to.be.withBody;",
+							"    pm.response.to.be.json;",
+							"});",
+							"",
+							"pm.test(\"Response must contain basic user data\", function () {",
+							"    pm.expect(responseJson.data.user.id).to.not.be.undefined;",
+							"    pm.expect(responseJson.data.session).to.be.string;",
+							"    pm.expect(responseJson.error).to.oneOf([null, undefined]);",
+							"});",
+							"",
+							"pm.test(\"Response must contain refreshToken in cookies\", function () {",
+							"    pm.expect(pm.cookies.get('refreshToken')).to.be.string;",
+							"});",
+							"",
+							"pm.collectionVariables.set('session', responseJson.data.user.session);",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "username",
+							"value": "{{username}}",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "NewStrongerPassword2?1",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:3010/users/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3010",
+					"path": [
+						"users",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Respond to challenge",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const responseJson = pm.response.json();",
+							"",
+							"pm.test(\"Response must be valid and have a body\", function () {",
+							"    pm.response.to.be.ok;",
+							"    pm.response.to.be.withBody;",
+							"    pm.response.to.be.json;",
+							"});",
+							"",
+							"pm.test(\"Response must contain basic user data\", function () {",
+							"    pm.expect(responseJson.data.user.id).to.not.be.undefined;",
+							"    pm.expect(responseJson.data.user.accessToken).to.be.string;",
+							"    pm.expect(responseJson.error).to.oneOf([null, undefined]);",
+							"});",
+							"",
+							"pm.test(\"Response must contain refreshToken in cookies\", function () {",
+							"    pm.expect(pm.cookies.get('refreshToken')).to.be.string;",
+							"});",
+							"",
+							"pm.collectionVariables.set('accessToken', responseJson.data.user.accessToken);",
+							"pm.collectionVariables.set('refreshToken', pm.cookies.get('refreshToken'));",
+							"pm.collectionVariables.set('session', null);",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "username",
+							"value": "{{username}}",
+							"type": "text"
+						},
+						{
+							"key": "code",
+							"value": "001853",
+							"type": "text"
+						},
+						{
+							"key": "session",
+							"value": "{{session}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:3010/users/login/challenge",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3010",
+					"path": [
+						"users",
+						"login",
+						"challenge"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "username",
+			"value": "juffalow@juffalow.com",
+			"type": "string"
+		},
+		{
+			"key": "password",
+			"value": "StrongPassword1?!",
+			"type": "string"
+		},
+		{
+			"key": "accessToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "refreshToken",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "session",
+			"value": "",
+			"type": "string"
+		}
+	]
+}

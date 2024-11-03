@@ -1,0 +1,8 @@
+node_modules
+dist
+coverage
+.git
+README.md
+docker-compose.yml
+UserService.postman_collection.json
+LICENSE
