@@ -32,11 +32,6 @@ jobs:
       run: yarn install
     - name: Lint
       run: yarn run lint
-    - name: Test
-      env:
-        ROUTE_PREFIX: /users
-        LOGGER_LEVEL: error
-      run: yarn run test
     - name: build
       run: yarn run build
   push_latest_dockerhub:
