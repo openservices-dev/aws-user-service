@@ -45,5 +45,33 @@ export default {
         clientSecret: process.env.SERVICES_AWS_COGNITO_CLIENT_SECRET,
       },
     },
+    trace: {
+      /**
+       * @type {string="AWS_XRAY", "CLS_HOOKED"}
+       * @default CLS_HOOKED
+       */
+      type: process.env.SERVICES_TRACE_TYPE || 'CLS_HOOKED',
+      /**
+       * If using Service Discovery to find the daemon address.
+       * @type {string}
+       * @requires SERVICES_TRACE_TYPE=AWS_XRAY
+       */
+      daemonAddressNamespace: process.env.SERVICES_TRACE_DAEMON_ADDRESS_NAMESPACE,
+      /**
+       * If using Service Discovery to find the daemon address.
+       * @type {string}
+       * @requires SERVICES_TRACE_TYPE=AWS_XRAY
+       */
+      daemonAddressName: process.env.SERVICES_TRACE_DAEMON_ADDRESS_NAME,
+      /**
+       * Supported values:
+       * * ECS
+       * * EC2
+       * * BEANSTALK
+       * @type {string}
+       * @requires SERVICES_TRACE_TYPE=AWS_XRAY
+       */
+      plugins: process.env.SERVICES_TRACE_PLUGINS,
+    },
   },
 }

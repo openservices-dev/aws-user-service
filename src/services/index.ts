@@ -1,6 +1,8 @@
 import aws from './aws';
 import token from './token';
 import iam from './iam';
+import trace from './trace';
+import config from '../config';
 
 const container = {
   get Token(): Services.Token {    
@@ -13,6 +15,16 @@ const container = {
 
   get IAM(): Services.IAM {
     return iam.AWSCognito;
+  },
+
+  get Trace(): Services.Trace {
+    switch (config.services.trace.type) {
+      case 'AWS_XRAY':
+        return trace.AWSXRay;
+      case 'CLS_HOOKED':
+      default:
+        return trace.CLSHooked;
+    }
   },
 };
 
