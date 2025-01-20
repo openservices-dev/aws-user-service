@@ -5,9 +5,6 @@ import https from 'https';
 class AWSXRay implements Services.Trace {
   constructor (plugins: string) {
     this.setPlugins(plugins);
-
-    XRay.captureHTTPsGlobal(http, true);
-    XRay.captureHTTPsGlobal(https, true);
   }
 
   public openSegment(defaultName: string) {
@@ -46,6 +43,11 @@ class AWSXRay implements Services.Trace {
     return XRay.captureAWSv3Client(client as T & { middlewareStack: { remove: any, use: any }, config: any });
   }
 
+  public captureHTTPRequests(): void {
+    XRay.captureHTTPsGlobal(http, true);
+    XRay.captureHTTPsGlobal(https, true);
+  }
+
   public setDaemonAddress(address: string) {
     XRay.setDaemonAddress(address);
   }
@@ -62,6 +64,10 @@ class AWSXRay implements Services.Trace {
     ].filter(plugin => plugin !== null);
 
     XRay.config(xrayPlugins); 
+  }
+
+  public processTraceData(data: string): { [key: string]: string } {
+    return XRay.utils.processTraceData(data);
   }
 }
 

@@ -47,5 +47,9 @@ declare namespace Services {
     getNamespace(): unknown;
 
     captureAWSv3Client<T>(client: T): T;
+
+    captureHTTPRequests(): void;
+
+    processTraceData(data: string): { [key: string]: string };
   }
 }

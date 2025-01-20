@@ -2,6 +2,7 @@ import aws from './aws';
 import token from './token';
 import iam from './iam';
 import trace from './trace';
+import ServiceDiscovery from './serviceDiscovery';
 import config from '../config';
 
 const container = {
@@ -25,6 +26,10 @@ const container = {
       default:
         return trace.CLSHooked;
     }
+  },
+
+  get ServiceDiscovery() {
+    return new ServiceDiscovery();
   },
 };
 

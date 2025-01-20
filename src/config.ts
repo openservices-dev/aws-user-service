@@ -11,6 +11,11 @@ export default {
    */
   env: process.env.ENV || 'DEVELOPMENT',
   /**
+   * @type {string}
+   * @default aws-user-service
+   */
+  serviceName: process.env.SERVICE_NAME || 'aws-user-service',
+  /**
    * Cookie domain, when user logs in.
    * @type {string}
    */
