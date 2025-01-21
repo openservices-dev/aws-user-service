@@ -4,5 +4,5 @@ coverage
 .git
 README.md
 docker-compose.yml
-UserService.postman_collection.json
+aws-user-service.postman_collection.json
 LICENSE
