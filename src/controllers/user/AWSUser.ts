@@ -125,6 +125,10 @@ class AWSUserController implements Controllers.UserController {
       const user = {
         id: data.payload.sub,
         email: data.payload.email,
+        meta: {
+          name: data.payload.name,
+        },
+        groups: data.payload['cognito:groups'],
       }
 
       return {
