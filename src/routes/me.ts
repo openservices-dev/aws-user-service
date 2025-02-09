@@ -60,6 +60,8 @@ router.get('/', requireAuth, async (req: express.Request, res: express.Response,
         user,
       },
     }).end();
+
+    next();
   } catch (err) {
     next(err);
   }

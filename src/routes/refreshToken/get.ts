@@ -86,6 +86,8 @@ router.get('/', validateCookies(schema), async (req: express.Request, res: expre
         },
       },
     }).end();
+
+    next();
   } catch (err) {
     next(err);
   }

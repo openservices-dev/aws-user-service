@@ -33,6 +33,8 @@ router.post('/', validateBody(schema), async (req: express.Request, res: express
         },
       },
     }).end();
+
+    next();
   } catch (err) {
     next(err);
   }

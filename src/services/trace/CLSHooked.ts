@@ -1,11 +1,17 @@
 import cls from 'cls-hooked';
 import { v7 as uuidv7 } from 'uuid';
-import type { Request, Response, NextFunction } from 'express';
+import type {
+  Request,
+  Response,
+  NextFunction,
+  RequestHandler,
+  ErrorRequestHandler,
+} from 'express';
 
-const NAMESPACE = 'aws-upload-service';
+const NAMESPACE = 'aws-user-service';
 
 class CLSHooked implements Services.Trace {
-  public openSegment() {
+  public openSegment(): RequestHandler {
     const namespace = this.getNamespace();
 
     return (req: Request, res: Response, next: NextFunction) => {
@@ -13,24 +19,24 @@ class CLSHooked implements Services.Trace {
 
       namespace.run(() => {
         namespace.set('traceId', traceId);
-        res.header('x-request-id', traceId);
+        res.header('X-Request-Id', traceId);
     
         next();
       });
     }
   }
 
-  public closeSegment() {
-    return (req: Request, res: Response, next: NextFunction) => {
-      next();
-    }
+  public closeSegment(): ErrorRequestHandler {
+    return (error: Error, req: Request, res: Response, next: NextFunction) => {
+      next(error);
+    };
   }
 
-  public createSegment(name: string): unknown {
+  public createSegment(): unknown {
     return null;
   }
 
-  public setSegment(segment: unknown): void {
+  public setSegment(): void {
     return;
   }
 

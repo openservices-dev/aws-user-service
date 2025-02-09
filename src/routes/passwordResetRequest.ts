@@ -55,6 +55,8 @@ router.post('/', validateBody(schema), async (req: express.Request, res: express
       error: null,
       data: null,
     }).end();
+
+    next();
   } catch (err) {
     next(err);
   }

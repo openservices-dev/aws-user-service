@@ -16,9 +16,9 @@ app.use(cookieParser());
 app.use(cors);
 app.use(logRequest);
 
-app.use(services.Trace.openSegment(config.serviceName) as any);
+app.use(services.Trace.openSegment(config.serviceName));
 app.use(`${config.routePrefix}`, routes);
-app.use(services.Trace.closeSegment() as any);
+app.use(services.Trace.closeSegment());
 
 app.use(errorHandler);
 

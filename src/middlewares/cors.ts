@@ -1,6 +1,7 @@
+import type { Request, Response, NextFunction } from 'express';
 import config from '../config';
 
-export default function cors(req, res, next): void {
+export default function cors(req: Request, res: Response, next: NextFunction): void {
   const origin = req.get('origin');
   if (config.cors.origins.filter(allowedOrigin => allowedOrigin === origin)) {
     res.header('Access-Control-Allow-Credentials', 'true');

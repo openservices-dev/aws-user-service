@@ -58,6 +58,8 @@ router.post('/', validateCookies(schema), async (req: express.Request, res: expr
       error: null,
       data: null,
     }).end();
+
+    next();
   } catch (err) {
     next(err);
   }

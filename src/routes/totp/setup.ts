@@ -66,6 +66,8 @@ router.post('/', requireAuth, async (req: express.Request, res: express.Response
         },
       },
     }).end();
+
+    next();
   } catch (err) {
     next(err);
   }
