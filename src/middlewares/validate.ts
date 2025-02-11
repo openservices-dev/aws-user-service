@@ -1,5 +1,6 @@
-import { Request, Response, NextFunction } from 'express';
+import type { Request, Response, NextFunction } from 'express';
 import { ObjectSchema } from 'joi';
+import { BadRequestError } from '../errors/APIError';
 
 export function validateBody(schema: ObjectSchema) {
   return function (req: Request, res: Response, next: NextFunction): void {
@@ -12,6 +13,8 @@ export function validateBody(schema: ObjectSchema) {
       const { details } = error; 
    
       res.status(400).json({ error: details });
+
+      next(new BadRequestError('Invalid query parameters', 400));
     }
   };
 }
@@ -27,6 +30,8 @@ export function validateQuery(schema: ObjectSchema) {
       const { details } = error; 
    
       res.status(400).json({ error: details });
+
+      next(new BadRequestError('Invalid query parameters', 400));
     }
   };
 }
@@ -42,6 +47,8 @@ export function validateCookies(schema: ObjectSchema) {
       const { details } = error; 
    
       res.status(400).json({ error: details });
+
+      next(new BadRequestError('Invalid query parameters', 400));
     }
   };
 }
